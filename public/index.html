@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hash2App - Web to App Builder</title>
+    <title>Hash2App - Pro App Builder</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
+        .step { display: none; }
+        .step.active { display: block; }
         .spinner {
             border: 4px solid rgba(255, 255, 255, 0.3);
             border-radius: 50%;
@@ -22,106 +22,232 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Custom file input */
+        .file-input-label {
+            cursor: pointer;
+            border: 2px dashed #4a5568;
+            border-radius: 0.5rem;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.2s;
+        }
+        .file-input-label:hover { background-color: #2d3748; }
+        .file-input-label.has-file { border-style: solid; border-color: #48bb78; }
     </style>
 </head>
 <body class="bg-gray-900 text-white antialiased">
 
     <div class="flex flex-col items-center justify-center min-h-screen p-4 sm:p-6 lg:p-8">
         <div class="w-full max-w-2xl mx-auto">
-            <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl p-6 sm:p-8 lg:p-10 text-center">
-                <h1 class="text-4xl sm:text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 mb-3">
-                    Hash2App Builder
-                </h1>
-                <p class="text-gray-400 max-w-2xl mx-auto mb-8 text-lg">
-                    Turn any website into a native mobile app project in seconds.
-                </p>
+            
+            <!-- Step 1: Welcome & Core Info -->
+            <div id="step1" class="step active">
+                <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl p-8 text-center">
+                    <h1 class="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-purple-500 mb-3">Build Your App</h1>
+                    <p class="text-gray-400 max-w-2xl mx-auto mb-8 text-lg">Turn any website into a native mobile app project.</p>
 
-                <div class="flex flex-col gap-4 max-w-xl mx-auto mb-8">
-                    <input type="text" id="appNameInput" placeholder="Enter App Name (e.g., My Awesome App)" class="w-full px-5 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 placeholder-gray-500">
-                    <input type="url" id="urlInput" placeholder="Enter Full Website URL (e.g., https://example.com)" class="w-full px-5 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition duration-300 placeholder-gray-500">
-                    
-                    <button id="buildBtn" class="w-full mt-2 px-8 py-4 bg-indigo-600 text-white font-semibold text-lg rounded-lg hover:bg-indigo-700 active:scale-95 transition-all duration-300 shadow-lg shadow-indigo-600/30 flex items-center justify-center gap-3">
-                        <span id="buildButtonText">Build My App</span>
-                        <div id="buildSpinner" class="spinner hidden"></div>
+                    <div class="flex flex-col gap-4 max-w-xl mx-auto mb-6 text-left">
+                        <div>
+                            <label for="appNameInput" class="block text-sm font-medium text-gray-300 mb-1">App Name</label>
+                            <input type="text" id="appNameInput" placeholder="e.g., My Awesome App" class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                        </div>
+                        <div>
+                            <label for="urlInput" class="block text-sm font-medium text-gray-300 mb-1">Website URL</label>
+                            <div class="relative">
+                                <input type="url" id="urlInput" placeholder="https://example.com" class="w-full pl-4 pr-10 py-3 bg-gray-700 border border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:outline-none transition">
+                                <div id="urlValidationIcon" class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <button id="goToStep2Btn" class="w-full mt-2 px-8 py-4 bg-indigo-600 text-white font-semibold text-lg rounded-lg hover:bg-indigo-700 active:scale-95 transition-all duration-300 shadow-lg shadow-indigo-600/30">
+                        Next: Customize Icon
                     </button>
                 </div>
-                 <div id="statusMessage" class="text-yellow-400 min-h-[24px] mb-4"></div>
             </div>
 
-            <div id="downloadSection" class="hidden mt-8 text-center bg-gray-800/50 border border-gray-700 rounded-2xl p-8">
-                <h2 class="text-2xl font-bold text-green-400 mb-4">Build Successful!</h2>
-                <p class="text-gray-400 mb-6">Your app project is ready to download.</p>
-                <a id="downloadLink" href="#" target="_blank" class="inline-block px-10 py-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all duration-300">
-                    Download Your App Project (.zip)
-                </a>
-                <p class="text-gray-500 text-sm mt-6">Next Steps: Unzip the downloaded file and open the project in Android Studio or Xcode.</p>
+            <!-- Step 2: Customization -->
+            <div id="step2" class="step">
+                <div class="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-2xl shadow-2xl p-8 text-center">
+                    <h2 class="text-3xl font-bold mb-4">Customize Your App Icon</h2>
+                    <p class="text-gray-400 mb-8">Upload a square image (e.g., 1024x1024 .png) for the best results.</p>
+                    
+                    <input type="file" id="iconInput" class="hidden" accept="image/png, image/jpeg">
+                    <label for="iconInput" id="iconLabel" class="file-input-label">
+                        <svg class="w-12 h-12 text-gray-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        <span id="iconLabelText" class="text-gray-400 font-medium">Click to upload icon (optional)</span>
+                        <span id="iconFileName" class="text-green-400 font-semibold mt-2"></span>
+                    </label>
+
+                    <div class="flex gap-4 mt-8">
+                        <button id="backToStep1Btn" class="w-full px-6 py-3 bg-gray-600 text-white font-semibold rounded-lg hover:bg-gray-700 transition">Back</button>
+                        <button id="buildBtn" class="w-full px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 active:scale-95 transition flex items-center justify-center gap-3">
+                            <span id="buildButtonText">Build My App</span>
+                            <div id="buildSpinner" class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </div>
             </div>
+
+            <!-- Step 3: Build & Download -->
+            <div id="step3" class="step">
+                <div id="buildStatus" class="bg-gray-800/50 border border-gray-700 rounded-2xl p-8 text-center">
+                    <div id="buildInProgress">
+                         <div class="flex justify-center items-center mb-4">
+                            <div class="spinner !w-16 !h-16 !border-8"></div>
+                         </div>
+                        <h2 class="text-2xl font-bold text-yellow-400 mb-4">Building Your App...</h2>
+                        <p id="statusMessage" class="text-gray-400">This may take a minute. Please don't close this window.</p>
+                    </div>
+                    <div id="buildComplete" class="hidden">
+                        <h2 class="text-2xl font-bold text-green-400 mb-4">Build Successful!</h2>
+                        <p class="text-gray-400 mb-6">Your app project is ready to download.</p>
+                        <a id="downloadLink" href="#" target="_blank" class="inline-block px-10 py-4 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all duration-300">
+                            Download Project (.zip)
+                        </a>
+                        <p class="text-gray-500 text-sm mt-6">Next Steps: Unzip the file and open in Android Studio or Xcode.</p>
+                        <button id="startOverBtn" class="w-full mt-8 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">Build Another App</button>
+                    </div>
+                    <div id="buildError" class="hidden">
+                         <h2 class="text-2xl font-bold text-red-500 mb-4">Build Failed</h2>
+                         <p class="text-gray-400 mb-6">Something went wrong. Please check your URL and try again.</p>
+                         <button id="tryAgainBtn" class="w-full mt-8 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">Try Again</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Builds Section -->
+            <div id="recentBuilds" class="mt-8 text-center"></div>
         </div>
     </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
+            // --- State and DOM Elements ---
+            let currentStep = 1;
+            const steps = document.querySelectorAll('.step');
             const urlInput = document.getElementById('urlInput');
             const appNameInput = document.getElementById('appNameInput');
+            const iconInput = document.getElementById('iconInput');
             const buildBtn = document.getElementById('buildBtn');
-            const buildButtonText = document.getElementById('buildButtonText');
-            const buildSpinner = document.getElementById('buildSpinner');
-            const statusMessage = document.getElementById('statusMessage');
-            const downloadSection = document.getElementById('downloadSection');
-            const downloadLink = document.getElementById('downloadLink');
 
+            const cloudFunctionUrl = 'https://us-central1-hash2app.cloudfunctions.net/buildAppV2'; // <-- IMPORTANT!
+
+            // --- Navigation Logic ---
+            const showStep = (stepNumber) => {
+                steps.forEach(step => step.classList.remove('active'));
+                document.getElementById(`step${stepNumber}`).classList.add('active');
+                currentStep = stepNumber;
+            };
+
+            document.getElementById('goToStep2Btn').addEventListener('click', () => {
+                if (appNameInput.value.trim() && urlInput.value.trim() && urlInput.checkValidity()) {
+                    showStep(2);
+                } else {
+                    alert('Please enter a valid App Name and URL.');
+                }
+            });
+
+            document.getElementById('backToStep1Btn').addEventListener('click', () => showStep(1));
+            document.getElementById('startOverBtn').addEventListener('click', () => location.reload());
+            document.getElementById('tryAgainBtn').addEventListener('click', () => location.reload());
+
+            // --- Live URL Validation ---
+            const urlValidationIcon = document.getElementById('urlValidationIcon');
+            urlInput.addEventListener('input', () => {
+                if (urlInput.value.startsWith('https://') && urlInput.checkValidity()) {
+                    urlValidationIcon.innerHTML = `<svg class="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>`;
+                } else if (urlInput.value.length > 0) {
+                     urlValidationIcon.innerHTML = `<svg class="w-6 h-6 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                } else {
+                     urlValidationIcon.innerHTML = '';
+                }
+            });
+
+            // --- Icon Upload UI ---
+            const iconLabel = document.getElementById('iconLabel');
+            const iconLabelText = document.getElementById('iconLabelText');
+            const iconFileName = document.getElementById('iconFileName');
+            iconInput.addEventListener('change', () => {
+                if (iconInput.files.length > 0) {
+                    iconLabel.classList.add('has-file');
+                    iconLabelText.textContent = 'Icon selected:';
+                    iconFileName.textContent = iconInput.files[0].name;
+                } else {
+                    iconLabel.classList.remove('has-file');
+                    iconLabelText.textContent = 'Click to upload icon (optional)';
+                    iconFileName.textContent = '';
+                }
+            });
+
+            // --- Recent Builds Logic ---
+            const recentBuildsContainer = document.getElementById('recentBuilds');
+            const saveBuild = (appName, downloadUrl) => {
+                let builds = JSON.parse(localStorage.getItem('recentBuilds')) || [];
+                builds.unshift({ appName, downloadUrl, date: new Date().toISOString() });
+                builds = builds.slice(0, 3); // Keep only the last 3
+                localStorage.setItem('recentBuilds', JSON.stringify(builds));
+                renderRecentBuilds();
+            };
+            const renderRecentBuilds = () => {
+                const builds = JSON.parse(localStorage.getItem('recentBuilds')) || [];
+                if (builds.length === 0) return;
+
+                let html = '<h3 class="text-lg font-semibold text-gray-400 mb-4">Recent Builds</h3><div class="space-y-3">';
+                builds.forEach(build => {
+                    html += `
+                        <a href="${build.downloadUrl}" target="_blank" class="block bg-gray-800 hover:bg-gray-700 p-4 rounded-lg transition">
+                            <p class="font-semibold text-white">${build.appName}</p>
+                            <p class="text-xs text-gray-500">${new Date(build.date).toLocaleString()}</p>
+                        </a>
+                    `;
+                });
+                html += '</div>';
+                recentBuildsContainer.innerHTML = html;
+            };
+
+            // --- App Build Logic ---
             const handleAppBuild = async () => {
-                const url = urlInput.value.trim();
-                const appName = appNameInput.value.trim();
+                showStep(3);
+                document.getElementById('buildInProgress').classList.remove('hidden');
+                document.getElementById('buildComplete').classList.add('hidden');
+                document.getElementById('buildError').classList.add('hidden');
 
-                if (!url || !appName) {
-                    statusMessage.textContent = 'Please enter both an App Name and a URL.';
-                    return;
+                const formData = new FormData();
+                formData.append('appName', appNameInput.value.trim());
+                formData.append('url', urlInput.value.trim());
+                if (iconInput.files.length > 0) {
+                    formData.append('icon', iconInput.files[0]);
                 }
-                if (!url.startsWith('http')) {
-                    statusMessage.textContent = 'Please enter a full URL, including https://';
-                    return;
-                }
-
-                buildButtonText.textContent = 'Building...';
-                buildSpinner.classList.remove('hidden');
-                buildBtn.disabled = true;
-                statusMessage.textContent = 'Your app project is being generated. This may take a minute...';
-                downloadSection.classList.add('hidden');
-
-                // --- IMPORTANT: REPLACE WITH YOUR CLOUD FUNCTION URL ---
-                const cloudFunctionUrl = 'YOUR_CLOUD_FUNCTION_URL_HERE'; 
 
                 try {
                     const response = await fetch(cloudFunctionUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ url: url, name: appName }),
+                        body: formData,
                     });
 
                     if (!response.ok) {
-                        const error = await response.text();
-                        throw new Error(`Build failed: ${error}`);
+                        throw new Error(await response.text());
                     }
 
                     const result = await response.json();
 
-                    downloadLink.href = result.downloadUrl;
-                    downloadSection.classList.remove('hidden');
-                    statusMessage.textContent = '';
-                    downloadSection.scrollIntoView({ behavior: 'smooth' });
+                    document.getElementById('downloadLink').href = result.downloadUrl;
+                    document.getElementById('buildInProgress').classList.add('hidden');
+                    document.getElementById('buildComplete').classList.remove('hidden');
+                    saveBuild(appNameInput.value.trim(), result.downloadUrl);
 
                 } catch (error) {
-                    statusMessage.textContent = 'An error occurred. Please try again.';
-                    console.error('Error:', error);
-                } finally {
-                    buildButtonText.textContent = 'Build My App';
-                    buildSpinner.classList.add('hidden');
-                    buildBtn.disabled = false;
+                    console.error('Build Error:', error);
+                    document.getElementById('buildInProgress').classList.add('hidden');
+                    document.getElementById('buildError').classList.remove('hidden');
                 }
             };
 
             buildBtn.addEventListener('click', handleAppBuild);
+            renderRecentBuilds(); // Initial render on page load
         });
     </script>
 </body>
